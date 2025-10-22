@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -24,10 +25,11 @@ import com.example.langualink.ui.community.CommunityScreen
 import com.example.langualink.ui.learn.LearnScreen
 import com.example.langualink.ui.onboarding.OnboardingStepOneScreen
 import com.example.langualink.ui.onboarding.OnboardingStepTwoScreen
+import com.example.langualink.ui.onboarding.OnboardingViewModel // Import ViewModel
 import com.example.langualink.ui.profile.ProfileScreen
 
 /**
- * Le chemin de l'application
+ * Route definitions for the app
  */
 object AppRoutes {
     const val ONBOARDING_STEP_1 = "onboarding_step_1"
@@ -36,7 +38,7 @@ object AppRoutes {
 }
 
 /**
- * bottom navigation bar
+ * Screen definitions for the bottom navigation bar
  */
 sealed class NavScreen(val route: String, val label: String, val icon: ImageVector) {
     object Learn : NavScreen("learn", "Apprendre", Icons.Default.Book)
@@ -45,14 +47,16 @@ sealed class NavScreen(val route: String, val label: String, val icon: ImageVect
 }
 
 /**
- * root navigation graph
- * handle Onboarding process and main content screen switching
+ * Root navigation graph (handles onboarding vs main content)
  */
 @Composable
 fun AppRootNavigation() {
     val navController = rememberNavController()
 
-    // TODO:  replace get from ViewModel or de base de donnees
+    // Get a shared ViewModel instance scoped to this navigation graph
+    val onboardingViewModel: OnboardingViewModel = hiltViewModel()
+
+    // TODO: Replace with real logic from ViewModel or data store
     val onboardingCompleted = false
 
     val startDestination = if (onboardingCompleted) {
@@ -64,19 +68,24 @@ fun AppRootNavigation() {
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(AppRoutes.ONBOARDING_STEP_1) {
-            OnboardingStepOneScreen(onNextClick = {
-                navController.navigate(AppRoutes.ONBOARDING_STEP_2)
-            })
+            OnboardingStepOneScreen(
+                viewModel = onboardingViewModel, // Pass ViewModel
+                onNextClick = {
+                    navController.navigate(AppRoutes.ONBOARDING_STEP_2)
+                }
+            )
         }
         composable(AppRoutes.ONBOARDING_STEP_2) {
-            OnboardingStepTwoScreen(onFinishClick = {
-                // TODO: Save onboarding status to ViewModel or de base de donnees
+            OnboardingStepTwoScreen(
+                viewModel = onboardingViewModel, // Pass ViewModel
+                onFinishClick = {
+                    // TODO: Save onboarding completion state via ViewModel
 
-                navController.navigate(AppRoutes.MAIN_CONTENT) {
-
-                    popUpTo(AppRoutes.ONBOARDING_STEP_1) { inclusive = true }
+                    navController.navigate(AppRoutes.MAIN_CONTENT) {
+                        popUpTo(AppRoutes.ONBOARDING_STEP_1) { inclusive = true }
+                    }
                 }
-            })
+            )
         }
 
         composable(AppRoutes.MAIN_CONTENT) {
@@ -86,7 +95,7 @@ fun AppRootNavigation() {
 }
 
 /**
- * Main screen, contenant la barre de navigation inférieure
+ * Main app screen with bottom navigation
  */
 @Composable
 fun MainScreenWithBottomNav() {
@@ -108,11 +117,8 @@ fun MainScreenWithBottomNav() {
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
                             navController.navigate(screen.route) {
-
                                 popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-
                                 launchSingleTop = true
-
                                 restoreState = true
                             }
                         }
@@ -121,6 +127,7 @@ fun MainScreenWithBottomNav() {
             }
         }
     ) { innerPadding ->
+        // NavHost for the main content area (Learn, Community, Profile)
         NavHost(navController, startDestination = NavScreen.Learn.route, Modifier.padding(innerPadding)) {
             composable(NavScreen.Learn.route) { LearnScreen() }
             composable(NavScreen.Community.route) { CommunityScreen() }

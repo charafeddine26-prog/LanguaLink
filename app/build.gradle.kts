@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // --- 新增的 Compose 依赖 ---
     // Jetpack Compose BOM
