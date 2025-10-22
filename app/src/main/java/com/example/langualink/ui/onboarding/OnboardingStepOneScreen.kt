@@ -15,7 +15,7 @@ fun OnboardingStepOneScreen(onNextClick: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-            Text(text = "before start - page one")
+        Text(text = "before start - page one")
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onNextClick) {
             Text("next step")
