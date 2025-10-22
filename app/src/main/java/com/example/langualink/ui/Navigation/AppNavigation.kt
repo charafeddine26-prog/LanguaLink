@@ -78,6 +78,9 @@ fun AppRootNavigation() {
         composable(AppRoutes.ONBOARDING_STEP_2) {
             OnboardingStepTwoScreen(
                 viewModel = onboardingViewModel, // Pass ViewModel
+                onBackClick = {
+                    navController.popBackStack() // Go back to the previous screen
+                },
                 onFinishClick = {
                     // TODO: Save onboarding completion state via ViewModel
 

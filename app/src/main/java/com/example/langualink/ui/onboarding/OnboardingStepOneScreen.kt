@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Surface
 import androidx.compose.ui.draw.rotate
+import com.example.langualink.model.Level
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -56,7 +57,7 @@ fun OnboardingStepOneScreen(
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
 
     // Button is enabled only if "Français" is selected
-    val isButtonEnabled = selectedLanguage == "Français"
+    val isButtonEnabled = selectedLanguage != null
 
     Column(
         modifier = Modifier
