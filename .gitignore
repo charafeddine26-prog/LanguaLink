@@ -1,15 +1,56 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
+# Created by Gemini
+
+## Android Studio
+# Built application files
+*.apk
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
 /build
-/captures
-.externalNativeBuild
-.cxx
+/app/build
+
+# Local configuration file (sdk path, etc)
 local.properties
+
+# Log Files
+*.log
+
+# Android Studio Navigation editor files
+.idea/navEditor.xml
+
+# Android Studio captures folder
+/captures
+
+# Android Studio profiling data
+*.hprof
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+
+# C/C++ folder generated in Android Studio 2.2 and later
+.cxx
+
+# Gradle files
+.gradle
+/gradle.properties
+/gradlew
+/gradlew.bat
+
+# Google Services (e.g., for Firebase)
+google-services.json
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
