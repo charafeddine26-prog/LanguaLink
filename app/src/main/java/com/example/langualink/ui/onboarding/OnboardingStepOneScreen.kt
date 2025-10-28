@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,31 +34,17 @@ import androidx.compose.ui.draw.rotate
 import com.example.langualink.model.Level
 import androidx.compose.ui.unit.dp
 
+import androidx.compose.material3.OutlinedTextField
+
 @Composable
 fun OnboardingStepOneScreen(
     viewModel: OnboardingViewModel, // Receive the ViewModel
     onNextClick: () -> Unit
 ) {
-    // Mock list of languages
-    // Mock list of languages
-    val languages = listOf(
-        "Français",
-        "Español",
-        "Deutsch",
-        "日本語",
-        "Português",
-        "Italiano",
-        "한국어", // Korean
-        "Русский", // Russian
-        "中文", // Chinese
-        "العربية" // Arabic
-    )
+    val username by viewModel.username.collectAsState()
 
-    // Observe the selected language from the ViewModel
-    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
-
-    // Button is enabled only if "Français" is selected
-    val isButtonEnabled = selectedLanguage != null
+    // Button is enabled only if a name is entered
+    val isButtonEnabled = username.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -98,7 +85,7 @@ fun OnboardingStepOneScreen(
                 tonalElevation = 4.dp
             ) {
                 Text(
-                    text = "Hello! It's your first time here!\nLet me know which language you want to learn",
+                    text = "Hello! What should I call you?",
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
@@ -106,24 +93,13 @@ fun OnboardingStepOneScreen(
             }
         }
 
-        // 3. Scrollable Language List
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(0.9f) // Set width to 90% of screen
-                .heightIn(max = 250.dp), // Reduced height to make scrolling more obvious
-            verticalArrangement = Arrangement.spacedBy(8.dp), // Add more space between items
-            contentPadding = PaddingValues(horizontal = 8.dp) // Padding only on sides
-        ) {
-            items(languages) { language ->
-                LanguageSelectItem(
-                    text = language,
-                    isSelected = (language == selectedLanguage),
-                    onSelect = {
-                        viewModel.selectLanguage(language) // Update ViewModel on selection
-                    }
-                )
-            }
-        }
+        // 3. Name Input
+        OutlinedTextField(
+            value = username,
+            onValueChange = { viewModel.setUsername(it) },
+            label = { Text("Enter your name") },
+            modifier = Modifier.fillMaxWidth(0.9f)
+        )
 
         // 4. Next Button
         Button(

@@ -10,6 +10,6 @@ import androidx.compose.ui.Modifier
 @Composable
 fun CommunityScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "(Community Screen)")
+        Text(text = "Social features are coming soon!")
     }
 }

@@ -1,9 +1,14 @@
 package com.example.langualink.ui.learn
 
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.clickable
@@ -27,7 +32,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun LearnScreen(viewModel: LearnViewModel = hiltViewModel()) {
+fun LearnScreen(viewModel: LearnViewModel = hiltViewModel(), onChapterClick: (Int) -> Unit) {
     // Collect the TopBar state from the ViewModel
     val topBarState by viewModel.topBarState.collectAsState()
 
@@ -55,7 +60,14 @@ fun LearnScreen(viewModel: LearnViewModel = hiltViewModel()) {
             if (topBarState.isLoading) {
                 CircularProgressIndicator() // Show loading indicator in content area if still loading
             } else {
-                Text("(Lesson List Area - Placeholder)") // Placeholder for future content
+                val chapters by viewModel.chapters.collectAsState()
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(chapters) { chapter ->
+                        Card(modifier = Modifier.fillMaxWidth().padding(8.dp).clickable { onChapterClick(chapter.id) }) {
+                            Text(text = chapter.title, modifier = Modifier.padding(16.dp))
+                        }
+                    }
+                }
             }
         }
     }
@@ -133,7 +145,7 @@ fun LearnTopBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (state.isLoading) "..." else state.currentLevel, // Display current level or loading dots
+                        text = if (state.isLoading) "..." else state.currentLevel ?: "", // Display current level or loading dots
                         style = MaterialTheme.typography.bodyMedium // Adjust style
                     )
                     Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Level")
