@@ -32,6 +32,7 @@ import com.example.langualink.ui.onboarding.OnboardingStepTwoScreen
 import com.example.langualink.ui.onboarding.OnboardingViewModel
 import com.example.langualink.ui.profile.ProgressionScreen
 import com.example.langualink.ui.SplashScreen
+import com.example.langualink.ui.learn.ExerciseScreen
 
 /**
  * Route definitions for the app
@@ -43,6 +44,7 @@ object AppRoutes {
     const val ONBOARDING_STEP_3 = "onboarding_step_3"
     const val MAIN_CONTENT = "main_content"
     const val CHAPTER_DETAILS = "chapter_details"
+    const val EXERCISE = "exercise/{chapterId}/{exerciseId}"
 }
 
 /**
@@ -78,7 +80,40 @@ fun AppRootNavigation() {
         }
 
         NavHost(navController = navController, startDestination = startDestination) {
-            // ... existing code ...
+            composable(AppRoutes.SPLASH) {
+                SplashScreen(onTimeout = {
+                    navController.navigate(AppRoutes.ONBOARDING_STEP_1) {
+                        popUpTo(AppRoutes.SPLASH) { inclusive = true }
+                    }
+                })
+            }
+            composable(AppRoutes.ONBOARDING_STEP_1) {
+                OnboardingStepOneScreen(
+                    viewModel = onboardingViewModel,
+                    onNextClick = { navController.navigate(AppRoutes.ONBOARDING_STEP_2) }
+                )
+            }
+            composable(AppRoutes.ONBOARDING_STEP_2) {
+                OnboardingStepTwoScreen(
+                    viewModel = onboardingViewModel,
+                    onNextClick = { navController.navigate(AppRoutes.ONBOARDING_STEP_3) }
+                )
+            }
+            composable(AppRoutes.ONBOARDING_STEP_3) {
+                OnboardingStepThreeScreen(
+                    viewModel = onboardingViewModel,
+                    onBackClick = { navController.popBackStack() },
+                    onFinishClick = {
+                        onboardingViewModel.setOnboardingCompleted(true)
+                        navController.navigate(AppRoutes.MAIN_CONTENT) {
+                            popUpTo(AppRoutes.ONBOARDING_STEP_1) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(AppRoutes.MAIN_CONTENT) {
+                MainScreenWithBottomNav()
+            }
         }
     }
 }
@@ -119,14 +154,15 @@ fun MainScreenWithBottomNav() {
     ) { innerPadding ->
         // NavHost for the main content area (Learn, Community, Profile)
         NavHost(navController, startDestination = NavScreen.Learn.route, Modifier.padding(innerPadding)) {
-            composable(NavScreen.Learn.route) { LearnScreen(learnViewModel) { chapterId ->
-                navController.navigate("${AppRoutes.CHAPTER_DETAILS}/$chapterId")
-            } }
+            composable(NavScreen.Learn.route) { LearnScreen(learnViewModel, navController) }
             composable(NavScreen.Community.route) { CommunityScreen() }
             composable(NavScreen.Profile.route) { ProgressionScreen() }
             composable("${AppRoutes.CHAPTER_DETAILS}/{chapterId}") { backStackEntry ->
                 val chapterId = backStackEntry.arguments?.getString("chapterId")?.toIntOrNull() ?: 0
                 ChapterDetailsScreen(chapterId = chapterId, learnViewModel = learnViewModel)
+            }
+            composable(AppRoutes.EXERCISE) { backStackEntry ->
+                ExerciseScreen(navController = navController)
             }
         }
     }

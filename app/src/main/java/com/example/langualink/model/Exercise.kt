@@ -17,5 +17,7 @@ data class Exercise(
 
 enum class ExerciseType {
     MULTIPLE_CHOICE,
-    TRANSLATION
+    TRANSLATION,
+    AUDIO,
+    VIDEO
 }
