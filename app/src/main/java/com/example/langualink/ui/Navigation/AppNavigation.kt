@@ -44,7 +44,7 @@ object AppRoutes {
     const val ONBOARDING_STEP_3 = "onboarding_step_3"
     const val MAIN_CONTENT = "main_content"
     const val CHAPTER_DETAILS = "chapter_details"
-    const val EXERCISE = "exercise/{chapterId}/{exerciseId}"
+    const val EXERCISE = "exercise/{chapterId}/{level}/{exerciseId}"
 }
 
 /**

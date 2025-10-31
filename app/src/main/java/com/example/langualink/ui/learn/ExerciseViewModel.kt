@@ -7,12 +7,14 @@ import com.example.langualink.data.repository.BadgeRepository
 import com.example.langualink.data.repository.ExerciseRepository
 import com.example.langualink.data.repository.UserRepository
 import com.example.langualink.model.Exercise
+import com.example.langualink.model.Level
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +22,8 @@ data class ExerciseScreenState(
     val exercise: Exercise? = null,
     val selectedOption: String? = null,
     val isAnswerCorrect: Boolean? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val showCompletionModal: Boolean = false
 )
 
 @HiltViewModel
@@ -36,6 +39,8 @@ class ExerciseViewModel @Inject constructor(
 
     val chapterId: Int = (savedStateHandle.get<String>("chapterId")!!).toInt()
     val exerciseId: Int = (savedStateHandle.get<String>("exerciseId")!!).toInt()
+
+    val level: Level = Level.valueOf(savedStateHandle.get<String>("level")!!)
 
     private var exercises: List<Exercise> = emptyList()
 
@@ -88,5 +93,13 @@ class ExerciseViewModel @Inject constructor(
         } else {
             null
         }
+    }
+
+    fun showCompletionModal() {
+        _screenState.update { it.copy(showCompletionModal = true) }
+    }
+
+    fun dismissCompletionModal() {
+        _screenState.update { it.copy(showCompletionModal = false) }
     }
 }

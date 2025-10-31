@@ -64,6 +64,8 @@ data class LearnScreenState(
 
     val exercises: List<com.example.langualink.model.Exercise> = emptyList(),
 
+    val completedExerciseIds: List<Int> = emptyList(),
+
     val isLoading: Boolean = true
 
 )
@@ -112,6 +114,10 @@ class LearnViewModel @Inject constructor(
 
                     val languages = languageDao.getAllLanguages().first()
 
+                    val earnedPoints = user.completedExerciseIds.size * 10
+
+                    val totalPoints = 500 + earnedPoints
+
                     _topBarState.update {
 
                         it.copy(
@@ -122,7 +128,7 @@ class LearnViewModel @Inject constructor(
 
                             currentLevel = user.currentLevel.name,
 
-                            points = 500, // TODO: Get points from user
+                            points = totalPoints, // TODO: Get points from user
 
                             availableLanguages = languages,
 
@@ -145,75 +151,42 @@ class LearnViewModel @Inject constructor(
 
 
     private fun loadChaptersAndExercises(languageId: Int, level: com.example.langualink.model.Level, completedExerciseIds: List<Int>) {
-
         viewModelScope.launch {
-
             exerciseDao.getExercisesByLanguageAndLevel(languageId, level).collect { exercises ->
-
                 Log.d("LearnViewModel", "Exercises: $exercises")
-
                 val chapters = exercises.groupBy { it.id / 10 }.map { (chapterId, chapterExercises) ->
-
                     com.example.langualink.model.Chapter(
-
                         id = chapterId,
-
                         title = "Chapter $chapterId",
-
                         exercises = chapterExercises
-
                     )
-
                 }
-
                 Log.d("LearnViewModel", "Chapters: $chapters")
 
-
-
                 val currentChapter = chapters.firstOrNull { chapter ->
-
                     chapter.exercises.any { exercise -> exercise.id !in completedExerciseIds }
-
                 } ?: chapters.lastOrNull()
 
                 Log.d("LearnViewModel", "Current Chapter: $currentChapter")
 
-
-
                 if (currentChapter != null) {
-
                     val completedInChapter = currentChapter.exercises.count { it.id in completedExerciseIds }
-
                     _screenState.update {
-
                         it.copy(
-
                             currentChapter = currentChapter,
-
                             chapterProgress = completedInChapter,
-
                             totalExercisesInChapter = currentChapter.exercises.size,
-
                             exercises = currentChapter.exercises,
-
+                            completedExerciseIds = completedExerciseIds,
                             isLoading = false
-
                         )
-
                     }
-
                 } else {
-
-                    _screenState.update { it.copy(isLoading = false) }
-
+                    _screenState.update { it.copy(isLoading = false, exercises = emptyList(), completedExerciseIds = completedExerciseIds) }
                 }
-
                 Log.d("LearnViewModel", "Screen State: ${_screenState.value}")
-
             }
-
         }
-
     }
 
 
