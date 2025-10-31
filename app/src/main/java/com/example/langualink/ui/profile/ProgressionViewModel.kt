@@ -2,9 +2,9 @@ package com.example.langualink.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.langualink.data.local.dao.BadgeDao
-import com.example.langualink.data.local.dao.ExerciseDao
-import com.example.langualink.data.local.dao.UserDao
+import com.example.langualink.data.repository.BadgeRepository
+import com.example.langualink.data.repository.ExerciseRepository
+import com.example.langualink.data.repository.UserRepository
 import com.example.langualink.model.Badge
 import com.example.langualink.model.Level
 import com.example.langualink.model.User
@@ -35,10 +35,9 @@ data class LevelProgress(
 
 @HiltViewModel
 class ProgressionViewModel @Inject constructor(
-    private val userDao: UserDao,
-    // 3. Inject ExerciseDao and BadgeDao
-    private val exerciseDao: ExerciseDao,
-    private val badgeDao: BadgeDao
+    private val userRepository: UserRepository,
+    private val exerciseRepository: ExerciseRepository,
+    private val badgeRepository: BadgeRepository
 ) : ViewModel() {
 
     // 4. Change the StateFlow type to our new UiState
@@ -51,20 +50,18 @@ class ProgressionViewModel @Inject constructor(
 
     private fun loadProfileData() {
         viewModelScope.launch {
-            // 6. Listen for changes in user data
-            userDao.getUser().collect { user ->
-                if (user != null) {
-                    // 7. When user data is updated, trigger a reload of all data
+            badgeRepository.getUserWithBadges(1).collect { userWithBadges ->
+                if (userWithBadges != null) {
+                    val user = userWithBadges.user
+                    val badges = userWithBadges.badges
                     val levelProgress = loadLevelProgress(user)
-                    val badges = loadBadges(user.earnedBadgeIds)
-                    val points = user.completedExerciseIds.size * 10 // (Logic consistent with ProgressionScreen.kt)
 
                     _uiState.update {
                         it.copy(
                             user = user,
                             levelProgressList = levelProgress,
                             earnedBadges = badges,
-                            totalPoints = 500 + points,
+                            totalPoints = user.points,
                             isLoading = false
                         )
                     }
@@ -84,7 +81,7 @@ class ProgressionViewModel @Inject constructor(
 
         for (level in allLevels) {
             // Get all exercises for this language and level from the database
-            val exercisesForLevel = exerciseDao
+            val exercisesForLevel = exerciseRepository
                 .getExercisesByLanguageAndLevel(user.currentLanguageId, level)
                 .first() // .first() to get the current value from the Flow
 
@@ -102,14 +99,5 @@ class ProgressionViewModel @Inject constructor(
             )
         }
         return progressList
-    }
-
-    /**
-     * Load badges earned by the user
-     */
-    private suspend fun loadBadges(badgeIds: List<Int>): List<Badge> {
-        if (badgeIds.isEmpty()) return emptyList()
-        // Get data from BadgeDao
-        return badgeDao.getBadgesByIds(badgeIds).first()
     }
 }
