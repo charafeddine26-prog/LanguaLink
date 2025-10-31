@@ -27,13 +27,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.langualink.ui.navigation.AppRoutes // <-- 1. 在这里添加 import
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseScreen(viewModel: ExerciseViewModel = hiltViewModel(), navController: NavController) {
     val screenState by viewModel.screenState.collectAsState()
-
     val timer by viewModel.timer.collectAsState(initial = 30)
+
+    if (screenState.showCompletionModal) {
+        CompletionModal(
+            title = "Chapitre Terminé!",
+            message = "Vous avez complété tous les exercices de ce chapitre.",
+            onDismiss = {
+                viewModel.dismissCompletionModal()
+                navController.popBackStack()
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -84,14 +95,14 @@ fun ExerciseScreen(viewModel: ExerciseViewModel = hiltViewModel(), navController
                     Spacer(modifier = Modifier.height(32.dp))
                     if (screenState.selectedOption != null) {
                         Button(
-                            onClick = { 
+                            onClick = {
                                 val nextExercise = viewModel.getNextExercise()
                                 if (nextExercise != null) {
-                                    navController.navigate("exercise/${viewModel.chapterId}/${nextExercise.id}") {
-                                        popUpTo("exercise/${viewModel.chapterId}/${viewModel.exerciseId}") { inclusive = true }
+                                    navController.navigate("exercise/${viewModel.chapterId}/${viewModel.level}/${nextExercise.id}") {
+                                        popUpTo(AppRoutes.EXERCISE) { inclusive = true }
                                     }
                                 } else {
-                                    navController.popBackStack()
+                                    viewModel.showCompletionModal()
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(0.8f)

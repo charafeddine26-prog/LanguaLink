@@ -151,77 +151,42 @@ class LearnViewModel @Inject constructor(
 
 
     private fun loadChaptersAndExercises(languageId: Int, level: com.example.langualink.model.Level, completedExerciseIds: List<Int>) {
-
         viewModelScope.launch {
-
             exerciseDao.getExercisesByLanguageAndLevel(languageId, level).collect { exercises ->
-
                 Log.d("LearnViewModel", "Exercises: $exercises")
-
                 val chapters = exercises.groupBy { it.id / 10 }.map { (chapterId, chapterExercises) ->
-
                     com.example.langualink.model.Chapter(
-
                         id = chapterId,
-
                         title = "Chapter $chapterId",
-
                         exercises = chapterExercises
-
                     )
-
                 }
-
                 Log.d("LearnViewModel", "Chapters: $chapters")
 
-
-
                 val currentChapter = chapters.firstOrNull { chapter ->
-
                     chapter.exercises.any { exercise -> exercise.id !in completedExerciseIds }
-
                 } ?: chapters.lastOrNull()
 
                 Log.d("LearnViewModel", "Current Chapter: $currentChapter")
 
-
-
                 if (currentChapter != null) {
-
                     val completedInChapter = currentChapter.exercises.count { it.id in completedExerciseIds }
-
                     _screenState.update {
-
                         it.copy(
-
                             currentChapter = currentChapter,
-
                             chapterProgress = completedInChapter,
-
                             totalExercisesInChapter = currentChapter.exercises.size,
-
                             exercises = currentChapter.exercises,
-
                             completedExerciseIds = completedExerciseIds,
-
                             isLoading = false
-
                         )
-
                     }
-
                 } else {
-
-                    _screenState.update { it.copy(isLoading = false) }
-
+                    _screenState.update { it.copy(isLoading = false, exercises = emptyList(), completedExerciseIds = completedExerciseIds) }
                 }
-
                 Log.d("LearnViewModel", "Screen State: ${_screenState.value}")
-
             }
-
         }
-
     }
 
 

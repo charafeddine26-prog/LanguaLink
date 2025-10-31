@@ -19,6 +19,9 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises WHERE id / 10 = :chapterId")
     fun getExercisesByChapterId(chapterId: Int): Flow<List<Exercise>>
 
+    @Query("SELECT * FROM exercises WHERE id / 10 = :chapterId AND level = :level")
+    fun getExercisesByChapterIdAndLevel(chapterId: Int, level: Level): Flow<List<Exercise>>
+
     @Query("SELECT * FROM exercises WHERE id = :exerciseId")
     fun getExerciseById(exerciseId: Int): Flow<Exercise>
 }

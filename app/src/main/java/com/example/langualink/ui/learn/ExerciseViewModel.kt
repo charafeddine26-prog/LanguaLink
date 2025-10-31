@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.langualink.data.local.dao.ExerciseDao
 import com.example.langualink.data.local.dao.UserDao
 import com.example.langualink.model.Exercise
+import com.example.langualink.model.Level
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +21,8 @@ data class ExerciseScreenState(
     val exercise: Exercise? = null,
     val selectedOption: String? = null,
     val isAnswerCorrect: Boolean? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val showCompletionModal: Boolean = false
 )
 
 @HiltViewModel
@@ -35,6 +38,8 @@ class ExerciseViewModel @Inject constructor(
     val chapterId: Int = (savedStateHandle.get<String>("chapterId")!!).toInt()
     val exerciseId: Int = (savedStateHandle.get<String>("exerciseId")!!).toInt()
 
+    val level: Level = Level.valueOf(savedStateHandle.get<String>("level")!!)
+
     private var exercises: List<Exercise> = emptyList()
 
     val timer = flow {
@@ -46,7 +51,7 @@ class ExerciseViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            exercises = exerciseDao.getExercisesByChapterId(chapterId).first()
+            exercises = exerciseDao.getExercisesByChapterIdAndLevel(chapterId, level).first()
             val exercise = exercises.find { it.id == exerciseId }
             _screenState.value = ExerciseScreenState(exercise = exercise, isLoading = false)
         }
@@ -57,6 +62,7 @@ class ExerciseViewModel @Inject constructor(
         if (exercise != null) {
             val isCorrect = exercise.correctAnswer == option
             _screenState.value = _screenState.value.copy(selectedOption = option, isAnswerCorrect = isCorrect)
+
             if (isCorrect) {
                 viewModelScope.launch {
                     val user = userDao.getUser().first()
@@ -79,5 +85,13 @@ class ExerciseViewModel @Inject constructor(
         } else {
             null
         }
+    }
+
+    fun showCompletionModal() {
+        _screenState.update { it.copy(showCompletionModal = true) }
+    }
+
+    fun dismissCompletionModal() {
+        _screenState.update { it.copy(showCompletionModal = false) }
     }
 }
