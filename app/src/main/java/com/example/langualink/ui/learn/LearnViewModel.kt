@@ -112,6 +112,10 @@ class LearnViewModel @Inject constructor(
 
                     val languages = languageDao.getAllLanguages().first()
 
+                    val earnedPoints = user.completedExerciseIds.size * 10
+
+                    val totalPoints = 500 + earnedPoints
+
                     _topBarState.update {
 
                         it.copy(
@@ -122,7 +126,7 @@ class LearnViewModel @Inject constructor(
 
                             currentLevel = user.currentLevel.name,
 
-                            points = 500, // TODO: Get points from user
+                            points = totalPoints, // TODO: Get points from user
 
                             availableLanguages = languages,
 
