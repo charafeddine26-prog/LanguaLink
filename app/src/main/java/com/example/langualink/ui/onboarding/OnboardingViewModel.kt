@@ -3,8 +3,9 @@ package com.example.langualink.ui.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.langualink.data.local.SettingsDataStore
-import com.example.langualink.data.local.dao.LanguageDao
-import com.example.langualink.data.local.dao.UserDao
+import com.example.langualink.data.repository.BadgeRepository
+import com.example.langualink.data.repository.LanguageRepository
+import com.example.langualink.data.repository.UserRepository
 import com.example.langualink.model.Level
 import com.example.langualink.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val userDao: UserDao,
-    private val languageDao: LanguageDao,
+    private val userRepository: UserRepository,
+    private val languageRepository: LanguageRepository,
+    private val badgeRepository: BadgeRepository,
     private val settingsDataStore: SettingsDataStore
 ) : ViewModel() {
 
@@ -29,7 +31,7 @@ class OnboardingViewModel @Inject constructor(
     // Public state flow for the UI to observe
     val selectedLanguage = _selectedLanguage.asStateFlow()
 
-    val languages = languageDao.getAllLanguages()
+    val languages = languageRepository.getAllLanguages()
 
     /**
      * Called when the user selects a language from the list.
@@ -86,16 +88,20 @@ class OnboardingViewModel @Inject constructor(
     fun saveUser() {
         viewModelScope.launch {
             val languageId = withContext(Dispatchers.IO) {
-                languageDao.getLanguageByName(_selectedLanguage.value!!).first().first().id
+                languageRepository.getLanguageByName(_selectedLanguage.value!!).first().first().id
             }
             val user = User(
                 name = _username.value,
                 currentLanguageId = languageId,
                 currentLevel = Level.valueOf(_selectedLevel.value!!),
                 completedExerciseIds = emptyList(),
-                earnedBadgeIds = emptyList()
+                completedChapterIds = emptyList()
             )
-            userDao.insertOrUpdateUser(user)
+            userRepository.insertOrUpdateUser(user)
+            // Award "First Login" badge
+            badgeRepository.awardBadge(user.id, 1)
+            // Add 10 points for completing onboarding
+            userRepository.addPoints(10)
         }
     }
 }

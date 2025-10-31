@@ -10,5 +10,6 @@ data class User(
     val currentLanguageId: Int,
     val currentLevel: Level,
     val completedExerciseIds: List<Int>,
-    val earnedBadgeIds: List<Int>
+    val points: Int = 0,
+    val completedChapterIds: List<Int> = emptyList()
 )

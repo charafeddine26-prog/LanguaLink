@@ -54,3 +54,4 @@ google-services.json
 *.ipr
 *.iws
 .idea/
+.screenshots/

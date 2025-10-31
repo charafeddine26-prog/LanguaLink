@@ -4,7 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.langualink.R
 import com.example.langualink.data.local.database.AppDatabase
+import com.example.langualink.data.local.database.MIGRATION_1_2
+import com.example.langualink.data.local.database.MIGRATION_2_3
+import com.example.langualink.data.local.database.MIGRATION_3_4
+import com.example.langualink.data.local.database.MIGRATION_4_5
+import com.example.langualink.model.Badge
 import com.example.langualink.model.Language
 import dagger.Module
 import dagger.Provides
@@ -34,9 +40,12 @@ object DatabaseModule {
                     val database = provideAppDatabase(context)
                     database.languageDao().insertLanguages(getInitialLanguages())
                     database.exerciseDao().insertExercises(getMockExercises())
+                    database.badgeDao().insertBadges(getInitialBadges())
                 }
             }
-        }).build()
+        }).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
@@ -69,6 +78,16 @@ object DatabaseModule {
             Language(8, "Русский"),
             Language(9, "中文"),
             Language(10, "العربية")
+        )
+    }
+
+    private fun getInitialBadges(): List<Badge> {
+        return listOf(
+            Badge(1, "First Login", "Awarded for logging in for the first time.", R.drawable.ic_launcher_foreground),
+            Badge(2, "First Lesson Completed", "Awarded for completing the first lesson.", R.drawable.ic_launcher_foreground),
+            Badge(3, "First Chapter Completed", "Awarded for completing the first chapter.", R.drawable.ic_launcher_foreground),
+            Badge(4, "Polyglot in the Making", "Awarded for starting a lesson in a new language.", R.drawable.ic_launcher_foreground),
+            Badge(5, "Quick Learner", "Awarded for finishing a lesson in under a minute.", R.drawable.ic_launcher_foreground)
         )
     }
 
