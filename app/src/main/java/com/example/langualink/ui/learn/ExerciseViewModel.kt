@@ -62,8 +62,10 @@ class ExerciseViewModel @Inject constructor(
                     val user = userDao.getUser().first()
                     if (user != null) {
                         val completedExerciseIds = user.completedExerciseIds.toMutableList()
-                        completedExerciseIds.add(exercise.id)
-                        userDao.insertOrUpdateUser(user.copy(completedExerciseIds = completedExerciseIds))
+                        if (exercise.id !in completedExerciseIds) {
+                            completedExerciseIds.add(exercise.id)
+                            userDao.insertOrUpdateUser(user.copy(completedExerciseIds = completedExerciseIds))
+                        }
                     }
                 }
             }

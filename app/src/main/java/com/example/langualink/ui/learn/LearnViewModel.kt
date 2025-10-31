@@ -64,6 +64,8 @@ data class LearnScreenState(
 
     val exercises: List<com.example.langualink.model.Exercise> = emptyList(),
 
+    val completedExerciseIds: List<Int> = emptyList(),
+
     val isLoading: Boolean = true
 
 )
@@ -199,6 +201,8 @@ class LearnViewModel @Inject constructor(
                             totalExercisesInChapter = currentChapter.exercises.size,
 
                             exercises = currentChapter.exercises,
+
+                            completedExerciseIds = completedExerciseIds,
 
                             isLoading = false
 

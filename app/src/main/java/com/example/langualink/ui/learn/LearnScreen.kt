@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.langualink.model.ExerciseType
+import androidx.compose.material.icons.filled.CheckCircle
 import com.example.langualink.model.Language
 
 // import com.example.langualink.R // Import if you add real flag drawables later
@@ -66,15 +67,41 @@ fun LearnScreen(viewModel: LearnViewModel = hiltViewModel(), navController: NavC
                     } else {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(screenState.exercises) { exercise ->
-                                Card(modifier = Modifier.fillMaxWidth().padding(8.dp).clickable { navController.navigate("exercise/${screenState.currentChapter?.id}/${exercise.id}") }) {
+
+                                val isCompleted = exercise.id in screenState.completedExerciseIds
+                                val cardColors = if (isCompleted) {
+                                    CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                    )
+                                } else {
+                                    CardDefaults.cardColors()
+                                }
+
+                                val icon = if (isCompleted) {
+                                    Icons.Default.CheckCircle
+                                } else {
+                                    when (exercise.type) {
+                                        ExerciseType.MULTIPLE_CHOICE, ExerciseType.TRANSLATION -> Icons.Default.TextFields
+                                        ExerciseType.AUDIO -> Icons.Default.Audiotrack
+                                        ExerciseType.VIDEO -> Icons.Default.Videocam
+                                    }
+                                }
+                                val iconTint = if (isCompleted) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    LocalContentColor.current
+                                }
+                                Card(modifier = Modifier.fillMaxWidth().padding(8.dp).clickable {
+                                    navController.navigate("exercise/${screenState.currentChapter?.id}/${exercise.id}")
+                                },
+                                    colors = cardColors
+                                ) {
                                     Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
-                                            imageVector = when (exercise.type) {
-                                                ExerciseType.MULTIPLE_CHOICE, ExerciseType.TRANSLATION -> Icons.Default.TextFields
-                                                ExerciseType.AUDIO -> Icons.Default.Audiotrack
-                                                ExerciseType.VIDEO -> Icons.Default.Videocam
-                                            },
-                                            contentDescription = "Exercise Type"
+                                            imageVector = icon,
+                                            contentDescription = "Exercise Type",
+                                            tint = iconTint
                                         )
                                         Spacer(modifier = Modifier.width(16.dp))
                                         Text(text = exercise.question)
