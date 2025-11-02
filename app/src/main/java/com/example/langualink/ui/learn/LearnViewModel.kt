@@ -60,14 +60,13 @@ class LearnViewModel @Inject constructor(
                 Log.d("LearnViewModel", "User: $user")
                 if (user != null) {
                     val languages = languageDao.getAllLanguages().first()
-                    val earnedPoints = user.completedExerciseIds.size * 10
-                    val totalPoints = 500 + earnedPoints
+
                     _topBarState.update {
                         it.copy(
                             currentLanguageName = languages.find { it.id == user.currentLanguageId }?.name,
                             currentLanguageId = user.currentLanguageId,
                             currentLevel = user.currentLevel.name,
-                            points = totalPoints, // TODO: Get points from user
+                            points = user.points,
                             availableLanguages = languages,
                             isLoading = false
                         )

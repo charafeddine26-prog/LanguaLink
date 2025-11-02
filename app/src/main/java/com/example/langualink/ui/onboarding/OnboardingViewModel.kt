@@ -95,7 +95,8 @@ class OnboardingViewModel @Inject constructor(
                 currentLanguageId = languageId,
                 currentLevel = Level.valueOf(_selectedLevel.value!!),
                 completedExerciseIds = emptyList(),
-                completedChapterIds = emptyList()
+                completedChapterIds = emptyList(),
+                points = 500
             )
             userRepository.insertOrUpdateUser(user)
             // Award "First Login" badge
