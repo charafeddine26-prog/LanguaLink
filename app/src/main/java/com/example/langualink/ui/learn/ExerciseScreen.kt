@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.langualink.ui.navigation.AppRoutes // <-- 1. 在这里添加 import
+import com.example.langualink.ui.navigation.AppRoutes
 
 import com.example.langualink.ui.navigation.NavScreen
 
