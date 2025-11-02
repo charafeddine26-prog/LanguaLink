@@ -3,10 +3,12 @@ package com.example.langualink.di
 import com.example.langualink.data.local.dao.BadgeDao
 import com.example.langualink.data.local.dao.ExerciseDao
 import com.example.langualink.data.local.dao.LanguageDao
+import com.example.langualink.data.local.dao.LessonDao
 import com.example.langualink.data.local.dao.UserDao
 import com.example.langualink.data.repository.BadgeRepository
 import com.example.langualink.data.repository.ExerciseRepository
 import com.example.langualink.data.repository.LanguageRepository
+import com.example.langualink.data.repository.LessonRepository
 import com.example.langualink.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -40,5 +42,11 @@ object RepositoryModule {
     @Singleton
     fun provideExerciseRepository(exerciseDao: ExerciseDao): ExerciseRepository {
         return ExerciseRepository(exerciseDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLessonRepository(lessonDao: LessonDao): LessonRepository {
+        return LessonRepository(lessonDao)
     }
 }

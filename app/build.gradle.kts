@@ -89,4 +89,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended) // <-- 新增这一行
     implementation(libs.androidx.navigation.compose)
     // -------------------------
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }

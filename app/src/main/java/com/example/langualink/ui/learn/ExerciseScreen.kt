@@ -29,6 +29,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.langualink.ui.navigation.AppRoutes // <-- 1. 在这里添加 import
 
+import com.example.langualink.ui.navigation.NavScreen
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseScreen(viewModel: ExerciseViewModel = hiltViewModel(), navController: NavController) {
@@ -41,7 +43,7 @@ fun ExerciseScreen(viewModel: ExerciseViewModel = hiltViewModel(), navController
             message = "Vous avez complété tous les exercices de ce chapitre.",
             onDismiss = {
                 viewModel.dismissCompletionModal()
-                navController.popBackStack()
+                navController.popBackStack(NavScreen.Learn.route, inclusive = false)
             }
         )
     }

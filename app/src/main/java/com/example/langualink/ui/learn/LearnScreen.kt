@@ -56,6 +56,23 @@ fun LearnScreen(viewModel: LearnViewModel = hiltViewModel(), navController: NavC
                         Text(text = "${screenState.chapterProgress}/${screenState.totalExercisesInChapter} lessons completed", style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
+
+                    screenState.currentLesson?.let { lesson ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .clickable {
+                                    navController.navigate("lesson/${lesson.title}/${lesson.content}")
+                                }
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(text = lesson.title, style = MaterialTheme.typography.titleLarge)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
                     if (screenState.exercises.isEmpty()) {
                         if (screenState.totalExercisesInChapter > 0 && screenState.chapterProgress == screenState.totalExercisesInChapter) {
                             Text("Vous avez fini tous les exos de ce level")

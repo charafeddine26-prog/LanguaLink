@@ -53,7 +53,8 @@ class ExerciseViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            exercises = exerciseRepository.getExercisesByChapterId(chapterId).first()
+            val allExercises = exerciseRepository.getExercisesByChapterId(chapterId).first()
+            exercises = allExercises.filter { it.level == level }
             val exercise = exercises.find { it.id == exerciseId }
             _screenState.value = ExerciseScreenState(exercise = exercise, isLoading = false)
         }

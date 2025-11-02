@@ -34,6 +34,7 @@ import com.example.langualink.ui.profile.ProgressionScreen
 import com.example.langualink.ui.SplashScreen
 import com.example.langualink.ui.community.ChatDetailScreen
 import com.example.langualink.ui.learn.ExerciseScreen
+import com.example.langualink.ui.learn.LessonScreen
 
 /**
  * Route definitions for the app
@@ -46,6 +47,7 @@ object AppRoutes {
     const val MAIN_CONTENT = "main_content"
     const val CHAPTER_DETAILS = "chapter_details"
     const val EXERCISE = "exercise/{chapterId}/{level}/{exerciseId}"
+    const val LESSON = "lesson/{title}/{content}"
 
     const val CHAT_DETAIL = "chat_detail/{chatId}"
 }
@@ -168,6 +170,11 @@ fun MainScreenWithBottomNav() {
             }
             composable(AppRoutes.EXERCISE) { backStackEntry ->
                 ExerciseScreen(navController = navController)
+            }
+            composable(AppRoutes.LESSON) { backStackEntry ->
+                val title = backStackEntry.arguments?.getString("title")
+                val content = backStackEntry.arguments?.getString("content")
+                LessonScreen(navController = navController, title = title, content = content)
             }
             composable(AppRoutes.CHAT_DETAIL) { backStackEntry ->
                 ChatDetailScreen(navController = navController)

@@ -9,16 +9,18 @@ import com.example.langualink.data.local.Converters
 import com.example.langualink.data.local.dao.BadgeDao
 import com.example.langualink.data.local.dao.ExerciseDao
 import com.example.langualink.data.local.dao.LanguageDao
+import com.example.langualink.data.local.dao.LessonDao
 import com.example.langualink.data.local.dao.UserDao
 import com.example.langualink.model.Badge
 import com.example.langualink.model.Exercise
 import com.example.langualink.model.Language
+import com.example.langualink.model.Lesson
 import com.example.langualink.model.User
 import com.example.langualink.model.UserBadgeCrossRef
 
 @Database(
-    entities = [User::class, Language::class, Badge::class, Exercise::class, UserBadgeCrossRef::class],
-    version = 5,
+    entities = [User::class, Language::class, Badge::class, Exercise::class, UserBadgeCrossRef::class, Lesson::class],
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -27,6 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun languageDao(): LanguageDao
     abstract fun badgeDao(): BadgeDao
     abstract fun exerciseDao(): ExerciseDao
+    abstract fun lessonDao(): LessonDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -59,5 +62,13 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         database.execSQL("DROP TABLE `users`")
         // Rename the new table to the original table name
         database.execSQL("ALTER TABLE `users_new` RENAME TO `users`")
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL(
+            "CREATE TABLE IF NOT EXISTS `lessons` (`id` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`id`))"
+        )
     }
 }

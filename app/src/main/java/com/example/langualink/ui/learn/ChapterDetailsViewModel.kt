@@ -29,7 +29,15 @@ class ChapterDetailsViewModel @Inject constructor(
     fun loadChapter(chapterId: Int, languageId: Int, level: com.example.langualink.model.Level) {
         viewModelScope.launch {
             val exercises = exerciseRepository.getExercisesByLanguageAndLevel(languageId, level).first()
-            _chapter.value = Chapter(chapterId, "Chapter $chapterId", exercises)
+            val chapters = exercises.groupBy { it.id / 10 }.map { (chapId, chapterExercises) ->
+                com.example.langualink.model.Chapter(
+                    id = chapId,
+                    title = "Chapter $chapId",
+                    exercises = chapterExercises
+                )
+            }
+            val chapter = chapters.find { it.id == chapterId }
+            _chapter.value = chapter
         }
     }
 
