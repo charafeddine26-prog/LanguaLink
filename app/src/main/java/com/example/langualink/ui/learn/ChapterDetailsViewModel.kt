@@ -1,20 +1,17 @@
 package com.example.langualink.ui.learn
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.langualink.data.repository.BadgeRepository
 import com.example.langualink.data.repository.ExerciseRepository
+import com.example.langualink.data.repository.UserRepository
 import com.example.langualink.model.Chapter
-import com.example.langualink.model.Exercise
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-import com.example.langualink.data.repository.UserRepository
-import com.example.langualink.data.repository.BadgeRepository
 
 @HiltViewModel
 class ChapterDetailsViewModel @Inject constructor(

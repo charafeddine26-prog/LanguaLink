@@ -22,19 +22,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.langualink.ui.SplashScreen
+import com.example.langualink.ui.community.ChatDetailScreen
 import com.example.langualink.ui.community.CommunityScreen
 import com.example.langualink.ui.learn.ChapterDetailsScreen
+import com.example.langualink.ui.learn.ExerciseScreen
 import com.example.langualink.ui.learn.LearnScreen
 import com.example.langualink.ui.learn.LearnViewModel
+import com.example.langualink.ui.learn.LessonScreen
 import com.example.langualink.ui.onboarding.OnboardingStepOneScreen
 import com.example.langualink.ui.onboarding.OnboardingStepThreeScreen
 import com.example.langualink.ui.onboarding.OnboardingStepTwoScreen
 import com.example.langualink.ui.onboarding.OnboardingViewModel
 import com.example.langualink.ui.profile.ProgressionScreen
-import com.example.langualink.ui.SplashScreen
-import com.example.langualink.ui.community.ChatDetailScreen
-import com.example.langualink.ui.learn.ExerciseScreen
-import com.example.langualink.ui.learn.LessonScreen
 
 /**
  * Route definitions for the app

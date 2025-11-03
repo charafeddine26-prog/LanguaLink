@@ -88,8 +88,13 @@ dependencies {
     // ... (在 dependencies 代码块的内部)
     implementation(libs.androidx.compose.material.icons.extended) // <-- 新增这一行
     implementation(libs.androidx.navigation.compose)
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     // -------------------------
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // iTextPDF
+    implementation("com.itextpdf.android:kernel-android:8.0.4")
+    implementation("com.itextpdf.android:layout-android:8.0.4")
 }

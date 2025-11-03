@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,15 +19,18 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +47,7 @@ import com.example.langualink.model.Level
 fun ProgressionScreen(viewModel: ProgressionViewModel = hiltViewModel()) {
     // 1. Subscribe to the new UiState
     val uiState by viewModel.uiState.collectAsState()
+    var showCertificateModal by remember { mutableStateOf(false) }
 
     if (uiState.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -77,6 +80,21 @@ fun ProgressionScreen(viewModel: ProgressionViewModel = hiltViewModel()) {
             item {
                 BadgeGrid(badges = uiState.earnedBadges)
             }
+
+            item {
+                Button(onClick = { showCertificateModal = true }) {
+                    Text(text = "View Certificate")
+                }
+            }
+        }
+
+        if (showCertificateModal) {
+            CertificateModal(
+                userName = uiState.user?.name ?: "User",
+                language = uiState.user?.currentLanguageId.toString(),
+                level = uiState.user?.currentLevel?.name ?: Level.A1.name,
+                onDismiss = { showCertificateModal = false }
+            )
         }
     }
 }

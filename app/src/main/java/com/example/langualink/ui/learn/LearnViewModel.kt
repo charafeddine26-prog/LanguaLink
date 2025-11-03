@@ -4,14 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.langualink.data.local.dao.ExerciseDao
+import com.example.langualink.data.local.dao.LanguageDao
+import com.example.langualink.data.local.dao.UserDao
 import com.example.langualink.data.repository.LessonRepository
-import com.example.langualink.model.Language // Assuming Language model exists
+import com.example.langualink.model.Language
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.example.langualink.data.local.dao.LanguageDao
-import com.example.langualink.data.local.dao.UserDao
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
