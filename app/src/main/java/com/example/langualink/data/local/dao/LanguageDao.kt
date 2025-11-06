@@ -14,4 +14,7 @@ interface LanguageDao {
 
     @Query("SELECT * FROM languages")
     fun getAllLanguages(): Flow<List<Language>>
+
+    @Query("SELECT * FROM languages WHERE name = :name")
+    fun getLanguageByName(name: String): Flow<List<Language>>
 }

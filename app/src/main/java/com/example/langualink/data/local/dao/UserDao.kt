@@ -14,4 +14,7 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = 1")
     fun getUser(): Flow<User?>
+
+    @Query("UPDATE users SET points = points + :points WHERE id = 1")
+    suspend fun addPoints(points: Int)
 }

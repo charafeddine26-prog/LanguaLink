@@ -2,7 +2,6 @@ package com.example.langualink.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 
 @Entity(tableName = "exercises")
 data class Exercise(
@@ -17,5 +16,7 @@ data class Exercise(
 
 enum class ExerciseType {
     MULTIPLE_CHOICE,
-    TRANSLATION
+    TRANSLATION,
+    AUDIO,
+    VIDEO
 }

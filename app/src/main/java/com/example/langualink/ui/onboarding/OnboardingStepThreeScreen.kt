@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,17 +37,22 @@ import androidx.compose.ui.unit.dp
 import com.example.langualink.R
 
 @Composable
-fun OnboardingStepTwoScreen(
+fun OnboardingStepThreeScreen(
     viewModel: OnboardingViewModel, // Receive the ViewModel
-    onNextClick: () -> Unit
+    onBackClick: () -> Unit,      // Receive the Back click handler
+    onFinishClick: () -> Unit
 ) {
-    val languages by viewModel.languages.collectAsState(initial = emptyList())
+    // New list of levels (A1-C2)
+    val levels = listOf("A1", "A2", "B1", "B2", "C1", "C2")
 
-    // Observe the selected language from the ViewModel
+    // Observe the selected level (which is now a String)
+    val selectedLevel by viewModel.selectedLevel.collectAsState()
+
+    // Observe the selected language from Step 1
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
 
-    // Button is enabled only if a language is selected
-    val isButtonEnabled = selectedLanguage != null
+    // The "FINISH" button is enabled only after a level is selected
+    val isButtonEnabled = selectedLevel != null
 
     Column(
         modifier = Modifier
@@ -56,7 +62,7 @@ fun OnboardingStepTwoScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 1. Mascot Image
+        // 1. Mascot Image (Copied from Step 1)
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Mascot",
@@ -66,7 +72,7 @@ fun OnboardingStepTwoScreen(
             contentScale = ContentScale.Fit
         )
 
-        // 2. Welcome Text as a Speech Bubble
+        // 2. Welcome Text as a Speech Bubble (Copied from Step 1)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
             // 2a. The tail of the bubble
@@ -87,7 +93,7 @@ fun OnboardingStepTwoScreen(
                 tonalElevation = 4.dp
             ) {
                 Text(
-                    text = "Which language do you want to learn?",
+                    text = "Please choose your level of :   ${selectedLanguage ?: "language"}",
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
@@ -95,41 +101,49 @@ fun OnboardingStepTwoScreen(
             }
         }
 
-        // 3. Scrollable Language List
+        // 3. Scrollable Level List
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth(0.9f) // Set width to 90% of screen
-                .heightIn(max = 250.dp), // Reduced height to make scrolling more obvious
-            verticalArrangement = Arrangement.spacedBy(8.dp), // Add more space between items
-            contentPadding = PaddingValues(horizontal = 8.dp) // Padding only on sides
+                .fillMaxWidth(0.9f) // 90% width
+                .heightIn(max = 250.dp), // Reduced height
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
-            items(languages) { language ->
-                LanguageSelectItem(
-                    text = language.name,
-                    isSelected = (language.name == selectedLanguage),
+            items(levels) { levelString -> // levelString is now "A1", "A2", etc.
+                LevelSelectItem(
+                    text = levelString,
+                    isSelected = (levelString == selectedLevel),
                     onSelect = {
-                        viewModel.selectLanguage(language.name) // Update ViewModel on selection
+                        viewModel.selectLevel(levelString) // Update ViewModel
                     }
                 )
             }
         }
 
-        // 4. Next Button
+        // 4. Finish Button
         Button(
-            onClick = onNextClick,
-            enabled = isButtonEnabled, // Button is enabled/disabled based on selection
-            modifier = Modifier.fillMaxWidth(0.4f) // Set width to 80% of screen
+            onClick = { 
+                viewModel.saveUser()
+                onFinishClick()
+            },
+            enabled = isButtonEnabled, // Enabled only when a level is selected
+            modifier = Modifier.fillMaxWidth(0.8f) // 80% width
         ) {
-            Text("NEXT STEP")
+            Text("FINISH")
+        }
+
+        // 5. Back Button
+        TextButton(onClick = onBackClick) {
+            Text("Back")
         }
     }
 }
 
 /**
- * A single selectable item for the language list.
+ * A single selectable item for the level list.
  */
 @Composable
-private fun LanguageSelectItem(
+private fun LevelSelectItem(
     text: String,
     isSelected: Boolean,
     onSelect: () -> Unit
@@ -161,7 +175,7 @@ private fun LanguageSelectItem(
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = text,
+                text = text, // Just display the text as is (e.g., "A1")
                 style = MaterialTheme.typography.bodyLarge
             )
         }
